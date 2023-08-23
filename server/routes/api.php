@@ -27,7 +27,7 @@ Route::group(["middleware" => "auth:api"], function() {
         Route::get('/singleRecipe/{recipe}', [RecipeController::class,'singleRecipe']);
         Route::post('/addlike/{recipe}', [RecipeController::class,'likeRecipe']);
         Route::post('/addComment/{recipe}', [RecipeController::class,'addComment']);
-        Route::post('/shoppingList', [ShoppingListController::class,'create']);
+        Route::get('/search', [RecipeController::class,'search']);
     }); 
 
     Route::group(["prefix" => "shoppingList"], function () {

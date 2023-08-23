@@ -124,4 +124,20 @@ class RecipeController extends Controller
             "status" => "Comment added",
         ],201);
     }
+
+    public function search(Request $request) {
+        $query = $request->input('query');
+
+        $recipes = Recipe::where('name', 'like', "%$query%")
+            ->orWhere('cuisine', 'like', "%$query%")
+            ->orWhereHas('ingredients', function ($subQuery) use ($query) {
+                $subQuery->where('name', 'like', "%$query%");
+            })
+            ->get();
+
+        return response()->json([
+            "status" => "success", 
+            "data" => $recipes
+        ]);
+    }
 }
