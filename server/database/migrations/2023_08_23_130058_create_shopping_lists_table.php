@@ -9,21 +9,20 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void {
-        Schema::create('users', function (Blueprint $table) {
+    public function up(): void
+    {
+        Schema::create('shopping_lists', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('name');
-            $table->string('email')->unique();
-            $table->text('password');
-            $table->text('pic_url');
-            $table->rememberToken();
             $table->timestamps();
         });
 
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('shopping_list_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('imageable_id');
-            $table->string('imageable_type');
+            $table->unsignedBigInteger('shopping_list_id');
+            $table->unsignedBigInteger('ingredient_id');
+            $table->string('quantity');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('shopping_lists');
     }
 };
