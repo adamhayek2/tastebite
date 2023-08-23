@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\RecipeController;
 
 
 
@@ -17,5 +18,9 @@ Route::group(["middleware" => "auth:api"], function() {
     Route::group(["prefix" => "user"], function () {
         Route::post('logout', [AuthController::class,'logout']);
         Route::post('refresh', [AuthController::class,'refresh']);
+    }); 
+
+    Route::group(["prefix" => "recipes"], function () {
+        Route::post('/create', [RecipeController::class,'create']);
     }); 
 });
