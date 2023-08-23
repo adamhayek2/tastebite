@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\RecipeController;
+use App\Http\Controllers\ShoppingListController;
 
 
 
@@ -26,5 +27,11 @@ Route::group(["middleware" => "auth:api"], function() {
         Route::get('/singleRecipe/{recipe}', [RecipeController::class,'singleRecipe']);
         Route::post('/addlike/{recipe}', [RecipeController::class,'likeRecipe']);
         Route::post('/addComment/{recipe}', [RecipeController::class,'addComment']);
+        Route::post('/shoppingList', [ShoppingListController::class,'create']);
+    }); 
+
+    Route::group(["prefix" => "shoppingList"], function () {
+        Route::post('/create', [ShoppingListController::class,'create']);
+        Route::get('/getall', [ShoppingListController::class,'getAll']);
     }); 
 });

@@ -8,7 +8,6 @@ use App\Models\Recipe;
 use App\Models\Ingredient;
 use App\Models\Like;
 use App\Models\Comment;
-
 use Auth;
 
 class RecipeController extends Controller

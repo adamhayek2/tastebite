@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class ShoppingListItem extends Model
 {
     use HasFactory;
+
+    public function shoppingList() {
+        return $this->belongsTo(ShoppingList::class);
+    }
 }

@@ -11,5 +11,8 @@ class Ingredient extends Model
     protected $fillable = [
         'name',
     ];
-    
+    public function shoppingLists() {
+        return $this->belongsToMany(ShoppingList::class, 'shopping_list_items')
+            ->withPivot('quantity');
+    }
 }

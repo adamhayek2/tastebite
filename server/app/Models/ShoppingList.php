@@ -8,4 +8,22 @@ use Illuminate\Database\Eloquent\Model;
 class ShoppingList extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'name',
+    ];
+    
+    public function ingredients() {
+        return $this->belongsToMany(Ingredient::class, 'shopping_list_items')
+            ->withPivot('quantity');
+    }
+
+    public function user() {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items() {
+        return $this->hasMany(ShoppingListItem::class);
+    }
 }
