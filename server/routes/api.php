@@ -22,5 +22,9 @@ Route::group(["middleware" => "auth:api"], function() {
 
     Route::group(["prefix" => "recipes"], function () {
         Route::post('/create', [RecipeController::class,'create']);
+        Route::get('/feed', [RecipeController::class,'feed']);
+        Route::get('/singleRecipe/{recipe}', [RecipeController::class,'singleRecipe']);
+        Route::post('/addlike/{recipe}', [RecipeController::class,'likeRecipe']);
+        Route::post('/addComment/{recipe}', [RecipeController::class,'addComment']);
     }); 
 });

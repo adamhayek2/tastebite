@@ -15,14 +15,20 @@ class Recipe extends Model
         'cuisine',
     ];
 
-    public function ingredients()
-    {
+    public function ingredients() {
         return $this->belongsToMany(Ingredient::class, 'recipe_ingredients')
             ->withPivot('quantity');
     }
 
-    public function image()
-    {
+    public function image() {
         return $this->morphOne(Image::class, 'imageable');
+    }
+
+    public function likes() {
+        return $this->hasMany(Like::class);
+    }
+
+    public function comments() {
+        return $this->hasMany(Comment::class);
     }
 }

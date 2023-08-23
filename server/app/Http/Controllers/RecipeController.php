@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Recipe;
 use App\Models\Ingredient;
+use App\Models\Like;
+use App\Models\Comment;
+
 use Auth;
 
 class RecipeController extends Controller
@@ -14,8 +17,7 @@ class RecipeController extends Controller
 
         try {
             $user = Auth::user();
-            
-            // Validate the input data
+
             $request->validate([
                 'name' => 'required|string',
                 'cuisine' => 'required|string',
@@ -59,5 +61,68 @@ class RecipeController extends Controller
                 "message" => $e->getMessage()
             ], 500);
         }
+    }
+
+    public function feed() {
+        $latestRecipes  = Recipe::latest()->take(16)->get();
+        
+        if(!$latestRecipes ){
+            return response()->json([
+                "status" => "success", 
+                "message" => "No recipies are added yet, would you like to be the firs on?"
+            ]);
+        }
+        return response()->json([
+            "status" => "success", 
+            "data" => $randomRecipes
+        ]);
+    }
+
+    public function singleRecipe(Recipe $recipe) {
+        if (!$recipe) {
+            return response()->json(['message' => 'Recipe not found'], 404);
+        }
+
+        try {
+            $recipe->load('ingredients', 'likes', 'comments.user');
+            
+            return response()->json($recipe);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'An error occurred'], 500);
+        }
+    }
+
+    public function likeRecipe(Recipe $recipe) {
+        $user = Auth::user()->id;
+
+        if ($recipe->likes()->where('user_id', $user)->exists()) {
+            return response()->json(['message' => 'Recipe already liked'], 400);
+        }
+
+        $like = new Like(['user_id' => $user]);
+        $recipe->likes()->save($like);
+
+        return response()->json([
+            "status" => "Recipe liked",
+        ],201);
+    }
+
+    public function addComment(Request $request, Recipe $recipe) {
+        $user = Auth::user()->id;
+        $request->validate([
+            'comment' => 'required|string',
+        ]);
+
+        $comment = new Comment([
+            'user_id' => $user,
+            'recipe' => $recipe,
+            'comment' => $request->comment,
+        ]);
+
+        $recipe->comments()->save($comment);
+
+        return response()->json([
+            "status" => "Comment added",
+        ],201);
     }
 }
