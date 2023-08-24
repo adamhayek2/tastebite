@@ -23,7 +23,8 @@ class RecipeController extends Controller
                 'ingredients' => 'required|array',
                 'ingredients.*.name' => 'required|string',
                 'ingredients.*.quantity' => 'required|string',
-                'picture' => 'required|string',
+                'pictures' => 'required|array',
+                'pictures.*' => 'required|string',
             ]);
     
             $recipe = new Recipe([
@@ -41,9 +42,17 @@ class RecipeController extends Controller
                 $recipe->ingredients()->attach($ingredient->id, ['quantity' => $ingredientData['quantity']]);
             }
 
-            $image = $recipe->image()->create([
-                'path' => $request->picture,
+            foreach ($request->pictures as $picure){
+                list($type, $data) = explode(';', $picure);
+                list(, $data) = explode(',', $data);
+                $imageData = base64_decode($data);
+                $imagePath = public_path('images/') . uniqid() . '.jpg';
+                file_put_contents($imagePath, $imageData);
+
+                $image = $recipe->image()->create([
+                    'path' => $imagePath,
             ]);
+            }
             
             if (!$image) {
                 throw new \Exception("Image record could not be created.");
@@ -63,7 +72,7 @@ class RecipeController extends Controller
     }
 
     public function feed() {
-        $latestRecipes  = Recipe::latest()->take(16)->get();
+        $latestRecipes  = Recipe::latest()->take(16)->with('image')->get();
         
         if(!$latestRecipes ){
             return response()->json([
@@ -73,7 +82,7 @@ class RecipeController extends Controller
         }
         return response()->json([
             "status" => "success", 
-            "data" => $randomRecipes
+            "data" => $latestRecipes
         ]);
     }
 
@@ -83,7 +92,7 @@ class RecipeController extends Controller
         }
 
         try {
-            $recipe->load('ingredients', 'likes', 'comments.user');
+            $recipe->load('ingredients', 'image', 'likes', 'comments.user');
             
             return response()->json($recipe);
         } catch (\Exception $e) {
