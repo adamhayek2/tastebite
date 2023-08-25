@@ -23,17 +23,15 @@ const Home = () => {
   }, []);
 
   return (
-    <>
+    <div className='flex flex-col justify-center items-center gap-24'>
       <NavBar/>
-      
-      {recipe.map(recipe => (
-            
-            <div key={recipe.id}>
-              {recipe.name}
-            </div>
-            // <Card data = {recipe}/>
-          ))}
-    </>
+      <div className=' container flex flex-row gap-10'>
+        {recipe.map((recipe) => (
+          <Card recipe = {recipe} id={recipe.id}/>
+              
+        ))}
+      </div>
+    </div>
   )
 }
 

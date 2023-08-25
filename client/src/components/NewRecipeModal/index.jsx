@@ -11,6 +11,14 @@ const NewRecipeModal = ({open, onClose}) => {
     const [base64Images, setBase64Images] = useState([]);
     const [error, setError] = useState();
 
+    const resetState = () => {
+        setName('');
+        setCuisine('');
+        setIngredients([{ name: '', quantity: '' }]);
+        setImages([]);
+        setBase64Images([]);
+      };
+
     const Create = async (e) => {
         e.preventDefault();
 
@@ -31,6 +39,8 @@ const NewRecipeModal = ({open, onClose}) => {
         try {
             const response = await CreateRecipe(name, cuisine, ingredients,base64Images);
             setError(false); 
+            onClose();
+            resetState();
             
           } catch (error) {
             console.error('Failed to create', error);

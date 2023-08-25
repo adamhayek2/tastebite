@@ -21,7 +21,9 @@ class Recipe extends Model
     }
 
     public function image() {
-        return $this->morphOne(Image::class, 'imageable');
+        return $this->morphMany(Image::class, 'imageable')
+        ->where('imageable_type', Recipe::class);
+        
     }
 
     public function likes() {

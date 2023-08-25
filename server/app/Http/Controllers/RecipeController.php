@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use App\Models\User;
 use App\Models\Recipe;
 use App\Models\Ingredient;
@@ -80,9 +81,29 @@ class RecipeController extends Controller
                 "message" => "No recipies are added yet, would you like to be the firs on?"
             ]);
         }
+
+        $recipesWithImages = [];
+
+    foreach ($latestRecipes as $recipe) {
+        $recipeData = [
+            "id" => $recipe->id,
+            "name" => $recipe->name,
+            "cuisine" => $recipe->cuisine,
+            "image" => []
+        ];
+
+        foreach ($recipe->image as $image) {
+            $imagePath = $image->path; 
+            $base64Image = file_get_contents($imagePath);
+            $recipeData["image"][] = base64_encode($base64Image);
+        }
+
+        $recipesWithImages[] = $recipeData;
+    }
+
         return response()->json([
             "status" => "success", 
-            "data" => $latestRecipes
+            "data" => $recipesWithImages
         ]);
     }
 
@@ -93,8 +114,11 @@ class RecipeController extends Controller
 
         try {
             $recipe->load('ingredients', 'image', 'likes', 'comments.user');
-            
-            return response()->json($recipe);
+
+            return response()->json([
+                "status" => "success", 
+                "data" => $recipe
+            ]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'An error occurred'], 500);
         }
